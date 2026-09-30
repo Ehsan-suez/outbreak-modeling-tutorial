@@ -7,7 +7,10 @@ authors = [
     { name = "Ehsan-suez", email = "ehsan.suez@uga.edu" }
 ]
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "matplotlib>=3.11.2",
+    "numpy>=2.4.6",
+]
 
 [project.scripts]
 outbreak-modeling-tutorial = "outbreak_modeling_tutorial:main"
