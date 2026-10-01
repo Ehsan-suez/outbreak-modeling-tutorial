@@ -1,0 +1,1 @@
+/Users/ehsansuez/projects/outbreak-modeling-tutorial/tutorials/06_rust_fundamentals/05_ownership_borrowing/target/debug/ownership_borrowing: /Users/ehsansuez/projects/outbreak-modeling-tutorial/tutorials/06_rust_fundamentals/05_ownership_borrowing/src/main.rs
