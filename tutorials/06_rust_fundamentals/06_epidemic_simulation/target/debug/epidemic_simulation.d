@@ -1,0 +1,1 @@
+/Users/ehsansuez/projects/outbreak-modeling-tutorial/tutorials/06_rust_fundamentals/06_epidemic_simulation/target/debug/epidemic_simulation: /Users/ehsansuez/projects/outbreak-modeling-tutorial/tutorials/06_rust_fundamentals/06_epidemic_simulation/src/main.rs
