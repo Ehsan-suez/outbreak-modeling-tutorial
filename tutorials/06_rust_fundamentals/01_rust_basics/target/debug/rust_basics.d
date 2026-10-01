@@ -1,0 +1,1 @@
+/Users/ehsansuez/projects/outbreak-modeling-tutorial/tutorials/06_rust_fundamentals/01_rust_basics/target/debug/rust_basics: /Users/ehsansuez/projects/outbreak-modeling-tutorial/tutorials/06_rust_fundamentals/01_rust_basics/src/main.rs
