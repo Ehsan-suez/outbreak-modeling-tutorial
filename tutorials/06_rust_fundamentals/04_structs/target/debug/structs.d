@@ -1,0 +1,1 @@
+/Users/ehsansuez/projects/outbreak-modeling-tutorial/tutorials/06_rust_fundamentals/04_structs/target/debug/structs: /Users/ehsansuez/projects/outbreak-modeling-tutorial/tutorials/06_rust_fundamentals/04_structs/src/main.rs
