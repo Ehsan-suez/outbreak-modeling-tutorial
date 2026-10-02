@@ -1,61 +1,57 @@
 // ============================================================
-// STOCHASTIC SIR SIMULATION
+// MODULE 07 — STOCHASTIC SIMULATION
+// 01_stochastic_sir
 // ============================================================
 //
-// Deterministic SIR:
+// This model is a stochastic version of the SIR model.
 //
-//     new infections = beta * S * I / N
-//     new recoveries = gamma * I
+// Each simulated DAY:
 //
-// Those equations give EXPECTED numbers of events.
+// 1. Calculate expected new infections.
+// 2. Calculate expected new recoveries.
+// 3. Randomly draw actual event counts using Poisson
+//    distributions.
+// 4. Update S, I, and R.
+// 5. Repeat.
 //
-// In this stochastic version, we use those expectations
-// as the means of Poisson distributions and randomly draw
-// the actual number of events.
-//
-// Example:
-//
-//     expected infections = 2.7
-//
-// does NOT mean exactly 2.7 people are infected.
-//
-// Instead:
-//
-//     new infections ~ Poisson(2.7)
-//
-// might produce 1, 2, 3, 4, ... actual infections.
+// This is NOT yet event-driven simulation.
 // ============================================================
+
 
 use rand::rng;
 use rand_distr::{Distribution, Poisson};
 
 
 // ------------------------------------------------------------
-// Draw a random event count from a Poisson distribution
+// POISSON RANDOM DRAW
 // ------------------------------------------------------------
 //
 // lambda = expected number of events.
 //
 // Example:
 //
-//     poisson_draw(3.0)
+//     expected infections = 2.7
 //
-// could return:
+// Instead of using exactly 2.7 infections, we draw:
 //
-//     1, 2, 3, 4, 5, ...
+//     X ~ Poisson(2.7)
 //
-// Different runs can produce different values.
+// which might produce:
+//
+//     1, 2, 3, 4, ...
+//
+// This introduces stochasticity into the epidemic.
 
 fn poisson_draw(lambda: f64) -> u64 {
 
-    // A Poisson mean must be positive.
+    // A Poisson distribution requires a positive mean.
     //
-    // If the expected number of events is zero,
-    // simply return zero events.
+    // If no events are expected, return zero.
 
     if lambda <= 0.0 {
         return 0;
     }
+
 
     // Create a Poisson distribution with mean lambda.
 
@@ -69,7 +65,7 @@ fn poisson_draw(lambda: f64) -> u64 {
     let mut random_generator = rng();
 
 
-    // Draw one random number from the distribution.
+    // Draw one random event count.
 
     distribution.sample(
         &mut random_generator
@@ -78,13 +74,13 @@ fn poisson_draw(lambda: f64) -> u64 {
 
 
 // ------------------------------------------------------------
-// Main simulation
+// MAIN STOCHASTIC SIR SIMULATION
 // ------------------------------------------------------------
 
 fn main() {
 
     // --------------------------------------------------------
-    // POPULATION
+    // POPULATION SIZE
     // --------------------------------------------------------
 
     let population: u64 = 10_000;
@@ -93,6 +89,12 @@ fn main() {
     // --------------------------------------------------------
     // MODEL PARAMETERS
     // --------------------------------------------------------
+    //
+    // beta:
+    //     transmission rate
+    //
+    // gamma:
+    //     recovery rate
 
     let beta: f64 = 0.30;
     let gamma: f64 = 0.10;
@@ -102,25 +104,33 @@ fn main() {
     // INITIAL EPIDEMIC STATE
     // --------------------------------------------------------
     //
-    // Unlike our deterministic model, we use whole numbers
-    // because people are discrete individuals.
+    // We use integer counts because people are discrete.
+    //
+    // `mut` is required because these values change
+    // throughout the simulation.
 
     let mut susceptible: u64 = 9_990;
     let mut infected: u64 = 10;
     let mut recovered: u64 = 0;
 
 
+    // Basic reproduction number for this simple SIR model.
+
+    let r0 = beta / gamma;
+
     println!(
         "R0 = {:.2}",
-        beta / gamma
+        r0
     );
 
 
     // --------------------------------------------------------
-    // SIMULATE 60 DAYS
+    // SIMULATE UP TO 60 DAYS
     // --------------------------------------------------------
 
     for day in 0..60 {
+
+        // Print current epidemic state.
 
         println!(
             "Day {:2} | S: {:5} | I: {:5} | R: {:5}",
@@ -132,14 +142,14 @@ fn main() {
 
 
         // ----------------------------------------------------
-        // EXPECTED INFECTIONS
+        // EXPECTED NEW INFECTIONS
         // ----------------------------------------------------
         //
-        // Same equation as deterministic SIR:
+        // Standard SIR transmission equation:
         //
-        //            S * I
-        // beta * -----------
-        //              N
+        //                     S × I
+        // infections = beta × -----
+        //                       N
 
         let expected_infections =
             beta
@@ -149,19 +159,22 @@ fn main() {
 
 
         // ----------------------------------------------------
-        // EXPECTED RECOVERIES
+        // EXPECTED NEW RECOVERIES
         // ----------------------------------------------------
+        //
+        // recoveries = gamma × I
 
         let expected_recoveries =
             gamma * infected as f64;
 
 
         // ----------------------------------------------------
-        // RANDOM EVENT COUNTS
+        // STOCHASTIC EVENT COUNTS
         // ----------------------------------------------------
         //
-        // Instead of directly using the expected values,
-        // draw actual event counts.
+        // The equations above give EXPECTED numbers.
+        //
+        // Now randomly determine what actually happens.
 
         let drawn_infections =
             poisson_draw(expected_infections);
@@ -171,38 +184,48 @@ fn main() {
 
 
         // ----------------------------------------------------
-        // KEEP EVENTS PHYSICALLY POSSIBLE
+        // PREVENT IMPOSSIBLE TRANSITIONS
         // ----------------------------------------------------
         //
-        // We cannot infect more people than are susceptible.
+        // Cannot infect more people than are susceptible.
 
         let new_infections =
             drawn_infections.min(susceptible);
 
 
-        // We cannot recover more people than are infected.
+        // Cannot recover more people than are infected.
 
         let new_recoveries =
             drawn_recoveries.min(infected);
 
 
         // ----------------------------------------------------
-        // UPDATE SIR STATE
+        // UPDATE THE SIR STATE
         // ----------------------------------------------------
+        //
+        // S -> I
 
         susceptible -= new_infections;
 
+
+        // Infected population gains new infections.
+
         infected += new_infections;
+
+
+        // I -> R
+
         infected -= new_recoveries;
 
         recovered += new_recoveries;
 
 
         // ----------------------------------------------------
-        // EXTINCTION
+        // EPIDEMIC EXTINCTION
         // ----------------------------------------------------
         //
-        // If nobody remains infected, transmission stops.
+        // If nobody remains infected, there can be no
+        // additional transmission.
 
         if infected == 0 {
 
@@ -215,3 +238,4 @@ fn main() {
         }
     }
 }
+

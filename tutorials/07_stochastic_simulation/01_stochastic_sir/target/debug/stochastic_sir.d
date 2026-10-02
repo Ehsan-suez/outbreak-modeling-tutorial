@@ -1,1 +1,0 @@
-/Users/ehsansuez/projects/outbreak-modeling-tutorial/tutorials/07_stochastic_simulation/01_stochastic_sir/target/debug/stochastic_sir: /Users/ehsansuez/projects/outbreak-modeling-tutorial/tutorials/07_stochastic_simulation/01_stochastic_sir/src/main.rs
