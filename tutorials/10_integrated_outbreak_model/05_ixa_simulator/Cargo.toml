@@ -1,0 +1,8 @@
+[package]
+name = "integrated_ixa_simulator"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+csv = "1.4.0"
+ixa = "3.1.0"
