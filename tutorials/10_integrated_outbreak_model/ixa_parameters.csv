@@ -1,0 +1,5 @@
+parameter,value
+R,1.376
+contacts_per_day,4.0
+infectious_days,5.0
+transmission_probability,0.0688
